@@ -12,7 +12,7 @@ Written in VS Studio 2022 with Cuda 12.9
 OCA
 
 
-Sample scree output:
+Sample screen output:
 
 --- Multiple Subwoofer (max. 4) Delay & Inversion Optimizer (GPU) ---
 
