@@ -41,10 +41,10 @@ Enable "Use Fast Math" in CUDA build settings
 Build and run!
 
 Or, just use the precompiled binary:
-_win64_RTX3000+seriesGPU.exe
+multipleSubOptimizer.exe
 
 📁 Input Files
-Export each subwoofer's frequency and phase response from REW (.txt format). Measurements should be aligned to a timing reference and taken from the same mic position.
+Export each subwoofer's frequency and phase response from REW (Export measurement as text). Measurements should be taken at the same mic position with timing reference.
 
 👨‍💻 About
 This tool uses a deliberately simple (and "dumb") brute-force method, exploiting modern GPU speed to guarantee optimal alignment. While not elegant, it's effective and fast—especially on high-end NVIDIA GPUs.
