@@ -1,16 +1,53 @@
-# SubOptimizerGPU
-Multiple subwoofer relative time delay and inversion optimizer (Windows only, requires NVDIA GPU)
+Multi-Subwoofer Time Delay & Polarity Optimizer (CUDA | Windows | NVIDIA GPU)
+A GPU-accelerated brute-force optimizer for aligning multiple subwoofers via relative time delay and polarity (inversion). This tool ensures optimal results by exhaustively evaluating all possible combinations within the specified delay range.
 
-Ultrafast (memory coalescing optimized GPU parallelization) brute force (results are optimal) muiltiple subwoofer time delay and inversion optimizer. It's almost instant for any time delay step for up to 3 subs. With 4 subs it can chew through a trillion iterations in a couple of hours (RTX3090 compute 86) but you can use 0.1ms steps or larger for much quicker results. It needs frequency and phase responses of all subs as .txt files. Comma or tab separated REW .txt exports (prefer 96 ppo) will work. Subwoofers should have been measured with timing reference at the same mic position.
+🚀 Key Features
+Brute-force precision: Exhaustive search guarantees the best alignment—no approximations or shortcuts.
 
-Compile with "Use Fast Math" (or run the .exe file directly - compute_52 (Maxwell) or higher)
+GPU-accelerated: Optimized for memory coalescing and parallel execution on NVIDIA GPUs using CUDA.
 
-Export subwoofer measurements as .txt from REW (use 96 ppo fro optimal results)
+Blazing fast: Near-instant results for up to 3 subs. With 4 subs, it can power through up to 1 trillion iterations in just a few hours on an RTX 3090 (Compute Capability 8.6).
 
-Written in VS Studio 2022 with Cuda 12.9
+Flexible resolution: Use fine delay steps (e.g. 0.1 ms) or coarser ones for faster results.
 
-OCA
+Human-hearing-aware optimization: Uses linearly weighted magnitude sums that approximate human hearing when REW exports use the PPO scale.
 
+📦 Requirements
+Windows PC
+
+NVIDIA GPU (Compute Capability 5.2 / Maxwell or newer — RTX 3000+ recommended)
+
+CUDA 12.9
+
+Visual Studio 2022 (for building from source) or use the included .exe
+
+Subwoofer measurements exported from REW as .txt files
+
+Tab- or comma-separated formats supported
+
+Use 96 PPO for best results
+
+All subwoofers must be measured at the same mic position with a timing reference
+
+🛠️ Build Instructions
+To build from source:
+
+Open the project in Visual Studio 2022
+
+Set CUDA to version 12.9
+
+Enable "Use Fast Math" in CUDA build settings
+
+Build and run!
+
+Or, just use the precompiled binary:
+_win64_RTX3000+seriesGPU.exe
+
+📁 Input Files
+Export each subwoofer's frequency and phase response from REW (.txt format). Measurements should be aligned to a timing reference and taken from the same mic position.
+
+👨‍💻 About
+This tool uses a deliberately simple (and "dumb") brute-force method, exploiting modern GPU speed to guarantee optimal alignment. While not elegant, it's effective and fast—especially on high-end NVIDIA GPUs.
 
 Sample screen output:
 
