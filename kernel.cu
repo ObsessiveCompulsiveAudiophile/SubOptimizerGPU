@@ -426,9 +426,21 @@ int main() {
     std::cout << "GPU Kernel Time: " << std::fixed << std::setprecision(3) << gpu_ms / 1000.0 << " s" << std::endl;
     if (overall_best_metric >= 0.0) {
         std::cout << "\nBest Configuration Found:" << std::endl;
+        float min_ref_delay_s = std::numeric_limits<float>::max();
+        if (num_active_subwoofers > 0) {
+            for (int s_idx = 0; s_idx < num_active_subwoofers; ++s_idx) {
+                min_ref_delay_s = std::min(min_ref_delay_s, best_config_final.delay_s[s_idx]);
+            }
+        }
+        else {
+            min_ref_delay_s = 0.0f; // Should not happen, but safe
+        }
+        std::cout << "(Delays are shown relative to the earliest subwoofer)" << std::endl;
         std::cout << std::fixed;
         for (int s_idx = 0; s_idx < num_active_subwoofers; ++s_idx) {
-            std::cout << "  SW" << (s_idx + 1) << " Delay: " << std::setprecision(3) << best_config_final.delay_s[s_idx] * 1000.0f << " ms, Polarity: "
+            // Subtract the minimum delay from each sub's delay to get the relative value.
+            float relative_delay_ms = (best_config_final.delay_s[s_idx] - min_ref_delay_s) * 1000.0f;
+            std::cout << "  SW" << (s_idx + 1) << " Delay: " << std::setprecision(3) << relative_delay_ms << " ms, Polarity: "
                 << (best_config_final.pol[s_idx] > 0.5f ? "Inverted" : "Normal") << std::endl;
         }
         //std::cout << "  Sum Lin Mags: " << std::scientific << std::setprecision(6) << overall_best_metric << std::defaultfloat << std::endl;
