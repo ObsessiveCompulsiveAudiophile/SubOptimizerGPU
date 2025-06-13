@@ -33,8 +33,10 @@ inline void gpuAssert(cudaError_t code, const char* file, int line, bool abort =
     if (code != cudaSuccess) {
         fprintf(stderr, "GPUassert: %s %s %d\n", cudaGetErrorString(code), file, line);
         if (abort) {
+#ifdef _WIN32
             std::cerr << "Press Enter to exit..." << std::endl;
             std::cin.clear(); std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); std::cin.get();
+#endif
             exit(code);
         }
     }
@@ -254,7 +256,20 @@ float get_user_float(const std::string& prompt, float default_val) {
     }
 }
 
-int main() {
+std::string get_filepath_from_args(int argc, char** argv, int index) {
+    if (index + 1 >= argc) {
+        return "";
+    }
+    return argv[index + 1];
+}
+
+int main(int argc, char** argv) {
+#ifndef _WIN32
+    if (argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " sub1.txt [sub2.txt ... sub4.txt]\n";
+        return 1;
+    }
+#endif
     std::cout << "--- Multiple Subwoofer (max. 4) Delay & Inversion Optimizer (GPU) ---" << std::endl;
     std::cout << "\n--- Configuration ---" << std::endl;
     std::cout << "Enter desired parameters or press Enter to use defaults." << std::endl;
@@ -263,15 +278,21 @@ int main() {
     std::vector<ChannelDataSourceSub> sub_data_sources(NUM_SUBWOOFERS_FIXED);
     int num_active_subwoofers = 0;
     for (int i = 0; i < NUM_SUBWOOFERS_FIXED; ++i) {
+#ifdef _WIN32
         std::string title = "Select Measurement File for Subwoofer " + std::to_string(i + 1) + " (or Cancel to finish)";
         std::cout << "\n" << title << std::endl;
         std::string sub_p = get_open_filepath_subs(title.c_str());
+#else
+        std::string sub_p = get_filepath_from_args(argc, argv, i);
+#endif
         if (sub_p.empty()) {
             if (i == 0) {
                 std::cerr << "Must load at least one subwoofer file. Aborting." << std::endl;
                 std::cin.get(); return 1;
             }
+#ifdef _WIN32
             std::cout << "No more files selected. Proceeding with " << i << " subwoofer(s)." << std::endl;
+#endif
             break;
         }
         if (!sub_data_sources[i].load_and_process_file(sub_p, min_freq, max_freq)) {
@@ -462,7 +483,9 @@ int main() {
     if (d_delay_steps_gpu) CUDA_CHECK(cudaFree(d_delay_steps_gpu));
     if (d_block_results_gpu) CUDA_CHECK(cudaFree(d_block_results_gpu));
     CUDA_CHECK(cudaDeviceReset());
+#ifdef _WIN32
     std::cout << "\nPress Enter to exit." << std::endl;
     std::cin.get();
+#endif
     return 0;
 }
